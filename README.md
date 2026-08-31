@@ -11,7 +11,7 @@ This repository contains device drivers for the STM32F030x4 microcontroller.
 - **Flash**: 16 KB
 - **SRAM**: 4 KB
 - **GPIO**: Up to 16 pins
-- **Peripherals**: GPIO, EXTI, NVIC, RCC
+- **Peripherals**: GPIO, EXTI, NVIC, RCC ,I2C,SPI,ADC
 
 ## Features
 
@@ -20,6 +20,9 @@ This repository contains device drivers for the STM32F030x4 microcontroller.
 - NVIC Driver
 - RCC Driver
 - SYSCFG Driver
+- ADC Driver
+- SPI Driver
+- I2C Driver 
 
 ## Pinout
 
