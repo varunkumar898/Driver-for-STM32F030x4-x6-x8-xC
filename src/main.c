@@ -34,12 +34,13 @@ int main(void)
         .Speed = GPIO_SPEED_LOW,
         .Pupdr = GPIO_NO_PULL
     };
-    GPIO_InitTypeDef pushButtonConfig = {
-        .Pin = 13,
-        .Mode = GPIO_MODE_INPUT,
-        .OType = GPIO_OUTPUT_TYPE_PUSH_PULL,
-        .Speed = GPIO_SPEED_LOW,
-        .Pupdr = GPIO_PULL_UP
+    USART_InitTypeDef pushButtonConfig = {
+        .BaudRate = 9600,
+        .Parity = USART_PARITY_NONE,
+        .WordLength = USART_WORD_LENGTH_8,
+        .StopBits = USART_STOPBIT_1,
+        .OverSampling = USART_OVERSAMPLING_16
+        .USARTinstant = USART1
     };
     /* Enable GPIOA and GPIOC clocks */
     RCC_EnableGPIO(GPIOA);
@@ -55,19 +56,4 @@ int main(void)
     EXTI_EnableInterrupt(13, TRIGGER_FALLING_EDGE);
     NVIC_EnableIRQ(EXTI4_15IRQn);
 
-    uint8_t ledOn = 0;
-
-    while (1) {
-        if (GPIO_ReadPin(GPIOC, 13) == 0U) {
-            delay(100000);
-            if (GPIO_ReadPin(GPIOC, 13) == 0U) {
-                ledOn = !ledOn;
-                if (ledOn) {
-                    GPIO_SetPin(GPIOA, ledConfig.Pin);
-                } else {
-                    GPIO_ResetPin(GPIOA, ledConfig.Pin);
-                }
-            }
-        }
-    }
-}
+    
