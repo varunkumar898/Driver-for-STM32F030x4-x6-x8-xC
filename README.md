@@ -254,20 +254,6 @@ I2C slave responding to master commands. Demonstrates clock stretching and ACK/N
 - **Flash overhead:** Minimal; drivers compile to tight machine code
 - **Interrupt latency:** < 1 µs (Cortex-M0 with proper priority configuration)
 
-## Git History
-
-Each commit represents a step in the development process:
-
-```
-17 commits showing evolution from basic GPIO → full peripheral suite
-Commit messages explain what was fixed:
-  "Fix I2C clock stretching bug"
-  "Add ADC DMA support"
-  "Debug EXTI edge detection on PB1"
-  ...
-```
-
-This history is intentional—it shows iterative debugging and refinement, not one-shot implementation.
 
 ## License
 
