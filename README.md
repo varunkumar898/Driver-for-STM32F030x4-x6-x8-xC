@@ -273,21 +273,7 @@ This history is intentional—it shows iterative debugging and refinement, not o
 
 This project is open source and available for educational and commercial use. See LICENSE file for details.
 
----
 
-## Why This Code Matters
-
-### For Learning
-You'll understand **exactly** how microcontroller peripherals work, at the register level. No black boxes.
-
-### For Job Interviews
-Employers (especially space-tech companies like GalaxEye Space) want engineers who can:
-- Read datasheets and implement drivers independently ✓
-- Debug hardware issues with oscilloscopes and logic analyzers ✓
-- Write clean, modular embedded code ✓
-- Validate designs on real silicon, not just simulations ✓
-
-This repository proves all of that.
 
 ### For Production Use
 You can extract individual drivers and integrate them into larger projects. The code is production-quality—error handling, no magic numbers, well-commented.
