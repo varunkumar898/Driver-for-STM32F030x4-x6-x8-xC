@@ -275,5 +275,3 @@ Found a bug? Optimized a driver? Submit a pull request.
 See the `docs/` folder or open an issue on GitHub.
 
 ---
-
-**Graduating June 2026. Open to embedded systems, firmware, and IoT engineering roles.**
