@@ -1,21 +1,14 @@
 #ifndef EXTI_DRIVER_H
 #define EXTI_DRIVER_H
-#include "STM32F030x4.h"
-#include <stdint.h>
+#include "STM32F030x8.h"
 
-typedef uint8_t boolean;
+typedef enum {
+    EXTI_TRIGGER_RISING,
+    EXTI_TRIGGER_FALLING,
+    EXTI_TRIGGER_BOTH
+} EXTI_Trigger_t;
 
-typedef enum
-{
-    TRIGGER_RISING_EDGE = 0,
-    TRIGGER_FALLING_EDGE,
-    TRIGGER_BOTH_EDGE
-} EXTI_TriggerType;
-
-void EXTI_EnableInterrupt(uint32_t EXTINumberline, EXTI_TriggerType TriggerType);
-void EXTI_EnableMask(uint32_t EXTINumberline, EXTI_TriggerType TriggerType);
-void EXTI_EnableSWIER(uint32_t EXTINumberline, EXTI_TriggerType TriggerType);
-void EXTI_CLEAR_Pending(uint32_t EXTINumberline);
-boolean EXTI_GetPending(uint32_t EXTINumberline);
-
-#endif // EXTI_DRIVER_H
+void EXTI_EnableInterrupt(uint8_t line, EXTI_Trigger_t trigger);
+uint8_t EXTI_GetPending(uint8_t line);
+void EXTI_ClearPending(uint8_t line);
+#endif

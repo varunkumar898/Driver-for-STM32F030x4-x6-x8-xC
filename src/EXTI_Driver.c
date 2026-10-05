@@ -1,91 +1,25 @@
 #include "EXTI_Driver.h"
 
-/*Enable interrupt for the specific line and unmasking number and trigger type*/
-void EXTI_EnableInterrupt(uint32_t EXTINumberline, EXTI_TriggerType TriggerType)
+void EXTI_EnableInterrupt(uint8_t line, EXTI_Trigger_t trigger)
 {
-    EXTI->EXTI_IMR |= (1U << EXTINumberline);
-    switch (TriggerType)
-    {
-    case TRIGGER_RISING_EDGE:
-        EXTI->EXTI_RTSR |= (1U << EXTINumberline);
-        EXTI->EXTI_FTSR &= ~(1U << EXTINumberline);
-        break;
-
-    case TRIGGER_FALLING_EDGE:
-        EXTI->EXTI_FTSR |= (1U << EXTINumberline);
-        EXTI->EXTI_RTSR &= ~(1U << EXTINumberline);
-        break;
-
-    case TRIGGER_BOTH_EDGE:
-        EXTI->EXTI_RTSR |= (1U << EXTINumberline);
-        EXTI->EXTI_FTSR |= (1U << EXTINumberline);
-        break;
-
-    default:
-        break;
-    }
+    uint32_t bit = 1UL << line;
+    EXTI->IMR |= bit;
+    if (trigger == EXTI_TRIGGER_RISING || trigger == EXTI_TRIGGER_BOTH)
+        EXTI->RTSR |= bit;
+    else
+        EXTI->RTSR &= ~bit;
+    if (trigger == EXTI_TRIGGER_FALLING || trigger == EXTI_TRIGGER_BOTH)
+        EXTI->FTSR |= bit;
+    else
+        EXTI->FTSR &= ~bit;
 }
 
-/*This function enable the unmasking for the specific line number */
-void EXTI_EnableMask(uint32_t EXTINumberline, EXTI_TriggerType TriggerType)
+uint8_t EXTI_GetPending(uint8_t line)
 {
-    EXTI->EXTI_EMR |= (1U << EXTINumberline);
-    switch (TriggerType)
-    {
-    case TRIGGER_RISING_EDGE:
-        EXTI->EXTI_RTSR |= (1U << EXTINumberline);
-        EXTI->EXTI_FTSR &= ~(1U << EXTINumberline);
-        break;
-
-    case TRIGGER_FALLING_EDGE:
-        EXTI->EXTI_FTSR |= (1U << EXTINumberline);
-        EXTI->EXTI_RTSR &= ~(1U << EXTINumberline);
-        break;
-
-    case TRIGGER_BOTH_EDGE:
-        EXTI->EXTI_RTSR |= (1U << EXTINumberline);
-        EXTI->EXTI_FTSR |= (1U << EXTINumberline);
-        break;
-
-    default:
-        break;
-    }
+    return (uint8_t)((EXTI->PR >> line) & 1U);
 }
 
-/*This function enable the software interrupt for the specific line number */
-void EXTI_EnableSWIER(uint32_t EXTINumberline, EXTI_TriggerType TriggerType)
+void EXTI_ClearPending(uint8_t line)
 {
-    EXTI->EXTI_SWIER |= (1U << EXTINumberline);
-    switch (TriggerType)
-    {
-    case TRIGGER_RISING_EDGE:
-        EXTI->EXTI_RTSR |= (1U << EXTINumberline);
-        EXTI->EXTI_FTSR &= ~(1U << EXTINumberline);
-        break;
-
-    case TRIGGER_FALLING_EDGE:
-        EXTI->EXTI_FTSR |= (1U << EXTINumberline);
-        EXTI->EXTI_RTSR &= ~(1U << EXTINumberline);
-        break;
-
-    case TRIGGER_BOTH_EDGE:
-        EXTI->EXTI_RTSR |= (1U << EXTINumberline);
-        EXTI->EXTI_FTSR |= (1U << EXTINumberline);
-        break;
-
-    default:
-        break;
-    }
-}
-
-/*This function clear the pending bit for the specific line number */
-void EXTI_CLEAR_Pending(uint32_t EXTINumberline)
-{
-    EXTI->EXTI_PR |= (1U << EXTINumberline);
-}
-
-/*This function get the pending bit for the specific line number */
-boolean EXTI_GetPending(uint32_t EXTINumberline)
-{
-    return (EXTI->EXTI_PR & (1U << EXTINumberline)) ? 1U : 0U;
+    EXTI->PR = (1UL << line);
 }

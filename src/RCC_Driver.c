@@ -1,53 +1,50 @@
 #include "RCC_Driver.h"
 
-
-/*enable the clock for the specified GPIO port */
-
-void RCC_EnableGPIO(GPIO_TypeDef *port)
+void RCC_EnableGPIO(GPIO_TypeDef *GPIOx)
 {
-    if (port == GPIOA)
-    {
-        RCC->AHBENR |= (1 << 17);
-    }
-    else if( port == GPIOB)
-    {
-        RCC->AHBENR |= (1 << 18);
-    }
-    else if (port == GPIOC)
-    {
-        RCC->AHBENR |= (1 << 19);
-    }
-    else if (port == GPIOD)
-    {
-        RCC->AHBENR |= (1 << 20);
-    }
-    else if (port == GPIOF)
-    {
-        RCC->AHBENR |= (1 << 22);
-    }
+    if (GPIOx == GPIOA) RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+    else if (GPIOx == GPIOB) RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+    else if (GPIOx == GPIOC) RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+    else if (GPIOx == GPIOD) RCC->AHBENR |= RCC_AHBENR_GPIODEN;
 }
-//Disable the clock for the specified GPIO port */
-void RCC_DisableGPIO(GPIO_TypeDef *port)
 
+void RCC_EnableUSART(USART_TypeDef *USARTx)
 {
-    if (port == GPIOA)
-    {
-        RCC->AHBENR &= ~(1 << 17);
-    }
-    else if( port == GPIOB)
-    {
-        RCC->AHBENR &= ~(1 << 18);
-    }
-    else if (port == GPIOC)
-    {
-        RCC->AHBENR &= ~(1 << 19);
-    }
-    else if (port == GPIOD)
-    {
-        RCC->AHBENR &= ~(1 << 20);
-    }
-    else if (port == GPIOF)
-    {
-        RCC->AHBENR &= ~(1 << 22);
-    }
+    if (USARTx == USART1) RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+    else if (USARTx == USART2) RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+}
+
+void RCC_EnableSPI(SPI_TypeDef *SPIx)
+{
+    if (SPIx == SPI1) RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
+    else if (SPIx == SPI2) RCC->APB1ENR |= RCC_APB1ENR_SPI2EN;
+}
+
+void RCC_EnableI2C(I2C_TypeDef *I2Cx)
+{
+    if (I2Cx == I2C1) RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
+    else if (I2Cx == I2C2) RCC->APB1ENR |= RCC_APB1ENR_I2C2EN;
+}
+
+void RCC_EnableADC(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_ADCEN;
+}
+
+void RCC_EnableSYSCFG(void)
+{
+    RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+}
+
+void RCC_ResetPeripheral(uint32_t *reg, uint32_t mask)
+{
+    *reg |= mask;
+    *reg &= ~mask;
+}
+
+uint32_t RCC_GetSystemClockHz(void)
+{
+    /* This project intentionally starts from HSI48/HSI8 reset configuration.
+       The example does not change SYSCLK, so reset SYSCLK is 8 MHz HSI. */
+    return 8000000UL;
 }

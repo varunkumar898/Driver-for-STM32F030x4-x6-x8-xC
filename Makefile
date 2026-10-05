@@ -1,34 +1,46 @@
-TARGET = firmware
+TARGET = main
+BUILD = build
 
 CC = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 SIZE = arm-none-eabi-size
 
-CFLAGS = -mcpu=cortex-m0 -mthumb -Wall -O0 -g -ffreestanding -Iinc
-LDFLAGS = -Tlinker.ld -nostdlib -Wl,-Map=$(TARGET).map -Wl,--undefined=SystemInit
+CPU = -mcpu=cortex-m0 -mthumb
+CFLAGS = $(CPU) -std=c11 -Wall -Wextra -Werror \
+         -ffreestanding -fno-builtin -fdata-sections -ffunction-sections \
+         -Iinc -Os
+LDFLAGS = $(CPU) -nostartfiles -Wl,--gc-sections -Wl,-Map=$(BUILD)/$(TARGET).map \
+          -Tlinker.ld
 
-SRC = $(wildcard src/*.c)
-OBJ = $(SRC:.c=.o) startup.o
+C_SRCS := $(wildcard src/*.c)
+C_OBJS := $(patsubst src/%.c,$(BUILD)/%.o,$(C_SRCS))
+ASM_OBJ := $(BUILD)/startup.o
 
-all: $(TARGET).elf $(TARGET).bin
+.PHONY: all clean flash size
 
-$(TARGET).elf: $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) $(LDFLAGS) -o $@
-	$(SIZE) $@
+all: $(BUILD)/$(TARGET).elf $(BUILD)/$(TARGET).bin size
 
-$(TARGET).bin: $(TARGET).elf
-	$(OBJCOPY) -O binary $< $@
+$(BUILD):
+	mkdir -p $(BUILD)
 
-src/%.o: src/%.c
+$(BUILD)/%.o: src/%.c | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-startup.o: startup.s
-	$(CC) $(CFLAGS) -c startup.s -o startup.o
+$(BUILD)/startup.o: startup.s | $(BUILD)
+	$(CC) $(CPU) -c $< -o $@
+
+$(BUILD)/$(TARGET).elf: $(C_OBJS) $(ASM_OBJ) linker.ld
+	$(CC) $(LDFLAGS) $(C_OBJS) $(ASM_OBJ) -o $@
+
+$(BUILD)/$(TARGET).bin: $(BUILD)/$(TARGET).elf
+	$(OBJCOPY) -O binary $< $@
+
+size: $(BUILD)/$(TARGET).elf
+	$(SIZE) $<
+
+flash: $(BUILD)/$(TARGET).elf
+	openocd -f interface/stlink.cfg -f target/stm32f0x.cfg \
+		-c "program $(BUILD)/$(TARGET).elf verify reset exit"
 
 clean:
-	rm -f src/*.o *.o firmware.elf firmware.bin firmware.map
-
-flash: firmware.bin
-	st-flash write firmware.bin 0x08000000
-
-.PHONY: all clean flash
+	rm -rf $(BUILD)

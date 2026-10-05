@@ -1,16 +1,19 @@
 #ifndef NVIC_DRIVER_H
 #define NVIC_DRIVER_H
-#include "STM32F030x4.h"
-#include "stdint.h"
+#include "STM32F030x8.h"
 
-void NVIC_EnableIRQ              (uint8_t IRQn);
-void NVIC_DisableIRQ             (uint8_t IRQn);
-uint32_t NVIC_GetPendingIRQ      (uint8_t IRQn);
-void NVIC_SetPendingIRQ          (uint8_t IRQn);
-void NVIC_ClearPendingIRQ        (uint8_t IRQn);
-void NVIC_SetPriorityIRQ         (uint8_t IRQn, uint32_t priority);
-uint32_t NVIC_GetPriorityIRQ     (uint8_t IRQn, uint32_t priority);
+typedef enum {
+    IRQ_EXTI4_15 = 7,
+    IRQ_ADC1 = 12,
+    IRQ_I2C1 = 23,
+    IRQ_I2C2 = 24,
+    IRQ_SPI1 = 25,
+    IRQ_SPI2 = 26,
+    IRQ_USART1 = 27,
+    IRQ_USART2 = 28
+} IRQn_t;
 
-
-
-#endif // NVIC_DRIVER_H
+void NVIC_EnableIRQ(IRQn_t irqn);
+void NVIC_DisableIRQ(IRQn_t irqn);
+void NVIC_SetPriorityIRQ(IRQn_t irqn, uint8_t priority);
+#endif
